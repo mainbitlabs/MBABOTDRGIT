@@ -1,14 +1,13 @@
 /*-----------------------------------------------------------------------------
+Respaldo original app.js 
+-----------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------
 A simple echo bot for the Microsoft Bot Framework. 
 -----------------------------------------------------------------------------*/
-var azurest = require('azure-storage');
+
 var restify = require('restify');
 var builder = require('botbuilder');
 var botbuilder_azure = require("botbuilder-azure");
-
-// Create table service for Azure Storage Bot
-var tableService = azurest.createTableService('botdrsa01','bKetS5g0o7rdmcbw+UsOM53EHq3BzAjQbQfN8yzkNLqQHfP08Npo5jDMLW6Oer9cpdY0ZdA2rrARncCgZUBVUg==');
-// Setup Restify Server
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -40,53 +39,22 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azu
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
-
 bot.dialog('/', [
     function (session) {
-        session.send('Hola desde mi entorno local')
-        builder.Prompts.text(session, "What's your name?");
+        builder.Prompts.text(session, "Hello from Github... What's your name?");
     },
     function (session, results) {
-        session.dialogData.name = results.response;
+        session.userData.name = results.response;
         builder.Prompts.number(session, "Hi " + results.response + ", How many years have you been coding?"); 
     },
     function (session, results) {
-        session.dialogData.coding = results.response;
+        session.userData.coding = results.response;
         builder.Prompts.choice(session, "What language do you code Node using?", ["JavaScript", "CoffeeScript", "TypeScript"]);
     },
     function (session, results) {
-        session.dialogData.language = results.response.entity;
-        session.send("Got it... " + session.dialogData.name + 
-                    " you've been programming for " + session.dialogData.coding + 
-                    " years and use " + session.dialogData.language + ".");
-                    var table1 = {
-                        PartitionKey : {'_': session.dialogData.name, '$':'Edm.String'},
-                        RowKey: {'_': session.dialogData.language, '$':'Edm.String'},
-                        Anios: {'_': session.dialogData.coding, '$':'Edm.String'}
-                    };
-                    tableService.insertOrReplaceEntity ('botdrsatb01', table1, function(error) {
-                    if(!error) {
-                        session.send('Entity botdrsatb01 inserted');   // Entity inserted
-                    }
-                else{
-                    console.log(error);
-                    
-                }}); 
-                    tableService.insertOrReplaceEntity ('botdrsatb02', table1, function(error) {
-                    if(!error) {
-                        session.send('Entity botdrsatb02 inserted');   // Entity inserted
-                    }
-                else{
-                    console.log(error);
-                    
-                }}); 
-                    tableService.insertOrReplaceEntity ('botdrsatb03', table1, function(error) {
-                    if(!error) {
-                        session.send('Entity botdrsatb03 inserted');   // Entity inserted
-                    }
-                else{
-                    console.log(error);
-                    
-                }}); 
+        session.userData.language = results.response.entity;
+        session.send("Got it... " + session.userData.name + 
+                    " you've been programming for " + session.userData.coding + 
+                    " years and use " + session.userData.language + ".");
     }
-]); 
+]);
