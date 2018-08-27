@@ -26,7 +26,7 @@ module.exports = [
         var number = matched ? matched.join('') : '';
         session.dialogData.phoneNumber = number; // Save the number.
               
-        console.log(session.dialogData.phoneNumber, typeof(session.dialogData.phoneNumber),);        
+        // console.log(session.dialogData.phoneNumber, typeof(session.dialogData.phoneNumber),);        
         
         
         // Se registra al usuario en Authy
