@@ -5,14 +5,13 @@ var azurest = require('azure-storage');
 var restify = require('restify');
 var builder = require('botbuilder');
 var botbuilder_azure = require("botbuilder-azure");
+var config = require('./config');
+console.log(config.email);
+console.log(config.table3);
+console.log(config.accessK);
+console.log(config.storageA);
 
-// Create table service for Azure Storage Bot
-var tableService = azurest.createTableService('botdrsa01','bKetS5g0o7rdmcbw+UsOM53EHq3BzAjQbQfN8yzkNLqQHfP08Npo5jDMLW6Oer9cpdY0ZdA2rrARncCgZUBVUg==');
 // Setup Restify Server
-
-// Setup Restify Server
-// nuevo coment línea 14
-// nuevo coment línea 15
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
    console.log('%s listening to %s', server.name, server.url); 
@@ -42,53 +41,32 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azu
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
+// Opciones iniciales Desbloquear cuenta y Resetear contraseña
+var DialogLabels = {
+    Unlock: 'Desbloquear cuenta',
+    Reset: 'Resetear contraseña'
+};
 
+// El díalogo principal inicia aquí
 bot.dialog('/', [
-    function (session) {
-        session.send('Hola desde mi entorno local')
-        builder.Prompts.text(session, "What's your name?");
+    function (session, results, next) {
+        // El bot envía las dos opciónes inicales
+        builder.Prompts.choice(session, 'Hola ¿en qué te puedo ayudar?', [DialogLabels.Unlock, DialogLabels.Reset], { listStyle: builder.ListStyle.button });
     },
-    function (session, results) {
-        session.dialogData.name = results.response;
-        builder.Prompts.number(session, "Hi " + results.response + ", How many years have you been coding?"); 
-    },
-    function (session, results) {
-        session.dialogData.coding = results.response;
-        builder.Prompts.choice(session, "What language do you code Node using?", ["JavaScript", "CoffeeScript", "TypeScript"]);
-    },
-    function (session, results) {
-        session.dialogData.language = results.response.entity;
-        session.send("Got it... " + session.dialogData.name + 
-                    " you've been programming for " + session.dialogData.coding + 
-                    " years and use " + session.dialogData.language + ".");
-                    var table1 = {
-                        PartitionKey : {'_': session.dialogData.name, '$':'Edm.String'},
-                        RowKey: {'_': session.dialogData.language, '$':'Edm.String'},
-                        Anios: {'_': session.dialogData.coding, '$':'Edm.String'}
-                    };
-                    tableService.insertOrReplaceEntity ('botdrsatb01', table1, function(error) {
-                    if(!error) {
-                        session.send('Entity botdrsatb01 inserted');   // Entity inserted
-                    }
-                else{
-                    console.log(error);
-                    
-                }}); 
-                    tableService.insertOrReplaceEntity ('botdrsatb02', table1, function(error) {
-                    if(!error) {
-                        session.send('Entity botdrsatb02 inserted');   // Entity inserted
-                    }
-                else{
-                    console.log(error);
-                    
-                }}); 
-                    tableService.insertOrReplaceEntity ('botdrsatb03', table1, function(error) {
-                    if(!error) {
-                        session.send('Entity botdrsatb03 inserted');   // Entity inserted
-                    }
-                else{
-                    console.log(error);
-                    
-                }}); 
+    function (session, result) {
+             
+        var selection = result.response.entity;
+        switch (selection) {
+            // El díalogo desbloqueo inicia si el usuario presiona Desbloquear cuenta
+            case DialogLabels.Unlock:
+            return session.beginDialog('desbloqueo');
+            // El díalogo existe inicia si el usuario presiona Resetear contraseña
+            case DialogLabels.Reset:
+            return session.beginDialog('existe');
+        }
     }
-]); 
+]);
+bot.dialog('existe', require('./existe'));
+bot.dialog('registro', require('./registro'));
+bot.dialog('reseteo', require('./reseteo'));
+bot.dialog('desbloqueo', require('./desbloqueo'));
