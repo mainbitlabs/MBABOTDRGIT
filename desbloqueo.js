@@ -1,12 +1,13 @@
 var azurest = require('azure-storage');
 var restify = require('restify');
 var builder = require('botbuilder');
+var config = require('./config');
 var azure = require('botbuilder-azure'); 
-
-var tableService = azurest.createTableService('botdrsa01','bKetS5g0o7rdmcbw+UsOM53EHq3BzAjQbQfN8yzkNLqQHfP08Npo5jDMLW6Oer9cpdY0ZdA2rrARncCgZUBVUg==');
-
+// Inicia el servicio Azure Storage Tables
+var tableService = azurest.createTableService(config.storageA, config.accessK);
+// Module.exports: Exporta los díalogos para que sean utilizados por app.js
 module.exports = [
-    function (session, results) {
+    function (session) {
         session.dialogData.accion = 'Desbloquear cuenta';
         builder.Prompts.text(session, `¿Cuál es la cuenta que deseas desbloquear? ejemplo: **aperez**`);
     },
@@ -23,14 +24,14 @@ module.exports = [
             var randomid = x();
             console.log(randomid);
 
-        var table1 = {
+        var unlock = {
             PartitionKey : {'_': session.dialogData.accion, '$':'Edm.String'},
             RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
             RandomId: {'_': randomid, '$':'Edm.String'}
         };
-        tableService.insertOrReplaceEntity ('botdrsatb01', table1, function(error) {
+        tableService.insertOrReplaceEntity (config.table1, unlock, function(error) {
         if(!error) {
-            console.log('Entity botdrsatb01 inserted');   // Entity inserted
+            console.log('Entity tabla1 inserted');   // Entity inserted
         }
         }); 
         var table2 = {
@@ -38,19 +39,21 @@ module.exports = [
             RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
             Status: {'_': 'Desbloqueado', '$':'Edm.String'}
         };
-        tableService.insertOrReplaceEntity ('botdrsatb02', table2, function(error) {
+        tableService.insertOrReplaceEntity (config.table2, table2, function(error) {
         if(!error) {
-            console.log('Entity botdrsatb02 inserted');   // Entity inserted
+            console.log('Entity tabla2 inserted');   // Entity inserted
         }
         }); 
-        
+        // Condición: si el usuario envía una respuesta...
         if (results.response) {
-            
+            // SendTyping: indica al usuario que el bot está trabajando...
             session.sendTyping();
-            session.send('Estamos atendiendo tu solicitud. Espera un momento...');
+            // Envíamos un mensaje al usuario para que espere.
+            session.send('Estamos atendiendo tu solicitud. Por favor espera un momento...');
+            // Hacemos un retraso de 5 segundos.
             setTimeout(() => {
-                
-                tableService.retrieveEntity('botdrsatb02', 'Desbloqueo cuenta', session.dialogData.cuenta, function(error, result, response) {
+                // Busca el estatus del usuario en la tabla 2.
+                tableService.retrieveEntity(config.table2, 'Desbloqueo cuenta', session.dialogData.cuenta, function(error, result, response) {
                     // var unlock = result.Status._;
                     if(!error && result.Status._=='Desbloqueado') {
             
@@ -62,14 +65,9 @@ module.exports = [
                     }
                     else{
                         session.endDialog("**Error:** Por favor intentalo más tarde.");
-                
                     }
-    
                 });
             }, 5000);
-                // session.endDialog(`Me solicitaste **${session.dialogData.accion}**, tu cuenta es **${session.dialogData.cuenta}**, Saludos.`);
-            
-           
         }
         else {
             session.endDialog('Adios!');
