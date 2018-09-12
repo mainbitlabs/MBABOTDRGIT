@@ -23,27 +23,19 @@ module.exports = [
             };
             var randomid = x();
             console.log(randomid);
-
+        // Variables de desbloqueo tabla 1
         var unlock = {
             PartitionKey : {'_': session.dialogData.accion, '$':'Edm.String'},
             RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
             RandomId: {'_': randomid, '$':'Edm.String'}
         };
+        // Función de guardar solicitud de desbloqueo en tabla 1
         tableService.insertOrReplaceEntity (config.table1, unlock, function(error) {
         if(!error) {
             console.log('Entity tabla1 inserted');   // Entity inserted
         }
         }); 
-        var table2 = {
-            PartitionKey : {'_': 'Desbloqueo cuenta', '$':'Edm.String'},
-            RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
-            Status: {'_': 'Desbloqueado', '$':'Edm.String'}
-        };
-        tableService.insertOrReplaceEntity (config.table2, table2, function(error) {
-        if(!error) {
-            console.log('Entity tabla2 inserted');   // Entity inserted
-        }
-        }); 
+        
         // Condición: si el usuario envía una respuesta...
         if (results.response) {
             // SendTyping: indica al usuario que el bot está trabajando...

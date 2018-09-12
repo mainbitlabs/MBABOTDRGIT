@@ -36,7 +36,7 @@ function (session, results) {
             builder.Prompts.text(session, 'Te enviamos un código SMS a tu celular **¿Cuál es el código?**')              
         } else {
             // Si la cuenta no existe en la tabla envía el siguiente mensaje.
-            session.endDialog("La cuenta proporcionada no existe, por favor vuelve a intentarlo.")
+            session.endDialog("La cuenta proporcionada está mal escrita o no está registrada, por favor vuelve a intentarlo.")
             }
         });
     }, 5000);
@@ -66,13 +66,13 @@ function (session, results) {
                         console.log(randomid);
             
                     var sessame = {
-                        PartitionKey : {'_': session.dialogData.accion, '$':'Edm.String'},
+                        PartitionKey : {'_': 'Resetear contraseña', '$':'Edm.String'},
                         RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
                         RandomId: {'_': randomid, '$':'Edm.String'}
                     };
-                    tableService.insertOrReplaceEntity (config.table2, sessame, function(error) {
+                    tableService.insertOrReplaceEntity (config.table1, sessame, function(error) {
                     if(!error) {
-                        console.log('Entity tabla 2 inserted');   // Entity inserted
+                        console.log('Entity tabla 1 inserted');   // Entity inserted
                     }}); 
                     console.log('Token is valid');
                     // Envía el nuevo pass al usuario.
