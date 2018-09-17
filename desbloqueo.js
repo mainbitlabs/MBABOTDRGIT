@@ -59,7 +59,7 @@ module.exports = [
                         session.endDialog("**Error:** Por favor intentalo más tarde.");
                     }
                 });
-            }, 5000);
+            }, 30000);
         }
         else {
             session.endDialog('Adios!');
