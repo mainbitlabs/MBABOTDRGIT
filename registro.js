@@ -48,9 +48,9 @@ module.exports = [
                 }); 
                 nodeoutlook.sendEmail({
                     auth: {
-                        user: "esanchezl@mainbit.com.mx",
-                        pass: "Kokardo01"
-                    }, from: 'esanchezl@mainbit.com.mx',
+                        user: `${config.email}`,
+                        pass: `${config.pass}`,
+                    }, from: `${config.email}`,
                     to: `${email}`,
                     subject: 'Código de validación - Servicio de Doble Autenticación',
                     html: `<p>Tu código de seguridad es:<br><h3> <b>${authyUser}</b> </h3> </p><br><p>Saludos.</p>`,
