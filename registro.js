@@ -29,12 +29,12 @@ module.exports = [
             countryCode: 'MX',
             email: session.dialogData.email,
             phone: session.dialogData.celular
-        },function (err, res) {
+        }, function (err, res) {
             if (err) {
-                console.log(`Error al Registrar Usuario`);
+                // console.log('Error al Registrar Usuario');
             }
             else {
-                console.log(`Usuario Registrado:`, res);
+                console.log('Usuario Registrado:', res);
                 var authyUser = res.user.id;
                 // Se guardan los datos del registro en la tabla 3.
                 var registro = {
@@ -70,7 +70,7 @@ module.exports = [
             console.log('Id tabla ' + authyId1 + typeof(authyId1)) ;
             console.log('Id Proporcionado ' + session.dialogData.token+ typeof(session.dialogData.token) ) ;
             if (authyId1 == session.dialogData.token) {
-                session.endDialog('Tu cuenta fue registrada correctamente.')
+                session.endDialog('Tu cuenta fue registrada correctamente.');
             } else {
                 client.deleteUser({ authyId: authyId1 });
                 session.endDialog('No pudimos validar el código proporicionado, vuelve a realizar el proceso de registro.');
@@ -78,4 +78,4 @@ module.exports = [
         });
     }
 
-]
+];

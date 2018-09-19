@@ -23,4 +23,4 @@ function (session, result) {
                 return session.beginDialog('/');
         }
 }
-]
+];

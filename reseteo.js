@@ -33,10 +33,10 @@ function (session, results) {
             // Obtiene el AuthyID y envia un SMS al número registrado
             client.requestSms({ authyId: authyId1 }, function (err, res) {
             });  
-            builder.Prompts.text(session, 'Te enviamos un código SMS a tu celular **¿Cuál es el código?**')              
+            builder.Prompts.text(session, 'Te enviamos un código SMS a tu celular **¿Cuál es el código?**');              
         } else {
             // Si la cuenta no existe en la tabla envía el siguiente mensaje.
-            session.endDialog("La cuenta proporcionada está mal escrita o no está registrada, por favor vuelve a intentarlo.")
+            session.endDialog("La cuenta proporcionada está mal escrita o no está registrada, por favor vuelve a intentarlo.");
             }
         });
     }, 5000);
@@ -44,9 +44,9 @@ function (session, results) {
 function (session, results) {
     session.dialogData.token1 = results.response;
     var token2 = session.dialogData.token1;
-    var cuenta = session.dialogData.cuenta+"@mainbit.com.mx"
+    var cuenta = session.dialogData.cuenta+"@mainbit.com.mx";
     console.log(cuenta);
-    console.log('Token es: '+ typeof(token2))
+    console.log('Token es: '+ typeof(token2));
     // session.send('Espera mientras validamos la operación...');
     tableService.retrieveEntity(config.table3, session.dialogData.accion, cuenta, function(error, result, response) {
         var authyId1 = result.AuthyID._;
@@ -86,4 +86,4 @@ function (session, results) {
             });
     });
 }
-]
+];
