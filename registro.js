@@ -36,6 +36,7 @@ module.exports = [
             else {
                 console.log(`Usuario Registrado:`, res);
                 var authyUser = res.user.id;
+                // Se guardan los datos del registro en la tabla 3.
                 var registro = {
                     PartitionKey : {'_': 'Usuario registrado', '$':'Edm.String'},
                     RowKey: {'_': email , '$':'Edm.String'},
@@ -47,14 +48,15 @@ module.exports = [
                 }
                 }); 
                 nodeoutlook.sendEmail({
-                    auth: {
-                        user: "esanchezl@mainbit.com.mx",
-                        pass: "Kokardo01"
-                    }, from: 'esanchezl@mainbit.com.mx',
+                // Se envía un correo al usuario con el token.
+                 auth: {
+                        user: `${config.email}`,
+                        pass: `${config.pass}`,
+                    }, from: `${config.email}`,
                     to: `${email}`,
                     subject: 'Código de validación - Servicio de Doble Autenticación',
                     html: `<p>Tu código de seguridad es:<br><h3> <b>${authyUser}</b> </h3> </p><br><p>Saludos.</p>`,
-                    text: 'This is text version!',});
+                    text: `Tu código de seguridad es ${authyUser}`,});
             }
         }),
         // Se valida la autenticación del usuario con el código 
@@ -63,10 +65,10 @@ module.exports = [
     },
     function (session, results) {
         session.dialogData.token = results.response;
-        tableService.retrieveEntity('botdrsatb03', 'Resetear contraseña', session.dialogData.email, function(error, result, response) {
+        tableService.retrieveEntity(config.table3, 'Resetear contraseña', session.dialogData.email, function(error, result, response) {
             let authyId1 = result.AuthyID._;
-            console.log('Id tabla'+authyId1 + typeof(authyId1)) ;
-            console.log('Id Proporcionado'+session.dialogData.token+ typeof(session.dialogData.token) ) ;
+            console.log('Id tabla '+ authyId1 + typeof(authyId1)) ;
+            console.log('Id Proporcionado ' + session.dialogData.token+ typeof(session.dialogData.token) ) ;
             if (authyId1 == session.dialogData.token) {
                 session.endDialog('Tu cuenta fue registrada correctamente.')
             } else {
