@@ -47,13 +47,9 @@ module.exports = [
                     console.log('Entity Authy inserted');   // Entity inserted
                 }
                 }); 
-                nodeoutlook.sendEmail({
-<<<<<<< HEAD
                 // Se envía un correo al usuario con el token.
-                 auth: {
-=======
+                nodeoutlook.sendEmail({
                     auth: {
->>>>>>> c0f3dd46d59d47ab581139d61ffe4030e998f087
                         user: `${config.email}`,
                         pass: `${config.pass}`,
                     }, from: `${config.email}`,
@@ -63,15 +59,15 @@ module.exports = [
                     text: `Tu código de seguridad es ${authyUser}`,});
             }
         }),
-        // Se valida la autenticación del usuario con el código 
+        // Se valida la autenticación del usuario con el código.
         session.send('Enviamos un código de validación a tu correo.');
         builder.Prompts.text(session, 'Por favor, **introduce el código enviado**');
     },
     function (session, results) {
         session.dialogData.token = results.response;
-        tableService.retrieveEntity(config.table3, 'Resetear contraseña', session.dialogData.email, function(error, result, response) {
+        tableService.retrieveEntity(config.table3, 'Usuario registrado', session.dialogData.email, function(error, result, response) {
             let authyId1 = result.AuthyID._;
-            console.log('Id tabla '+ authyId1 + typeof(authyId1)) ;
+            console.log('Id tabla ' + authyId1 + typeof(authyId1)) ;
             console.log('Id Proporcionado ' + session.dialogData.token+ typeof(session.dialogData.token) ) ;
             if (authyId1 == session.dialogData.token) {
                 session.endDialog('Tu cuenta fue registrada correctamente.')
