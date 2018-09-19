@@ -1,10 +1,10 @@
 var azurest = require('azure-storage');
 var builder = require('botbuilder');
-const Client = require('authy-client').Client;
+var Client = require('authy-client').Client;
 var config = require('./config');
 console.log(config.authyCl);
 // Inicia el servicio de Authy.
-const client = new Client({ key: config.authyCl });
+var client = new Client({ key: config.authyCl });
 // Inicia el servicio Azure Storage Tables.
 var tableService = azurest.createTableService(config.storageA, config.accessK);
 // Module.exports: Exporta los díalogos para que sean utilizados por app.js
@@ -28,7 +28,7 @@ function (session, results) {
     tableService.retrieveEntity(config.table3, session.dialogData.accion, cuenta, function(error, result, response) {
         // Si no hay error en la petición entonces...
        if (!error) {
-           let authyId1 = result.AuthyID._;
+           var authyId1 = result.AuthyID._;
            console.log('El id del usuario es: '+authyId1);
             // Obtiene el AuthyID y envia un SMS al número registrado
             client.requestSms({ authyId: authyId1 }, function (err, res) {
@@ -49,7 +49,7 @@ function (session, results) {
     console.log('Token es: '+ typeof(token2))
     // session.send('Espera mientras validamos la operación...');
     tableService.retrieveEntity(config.table3, session.dialogData.accion, cuenta, function(error, result, response) {
-        let authyId1 = result.AuthyID._;
+        var authyId1 = result.AuthyID._;
             console.log(authyId1);
             // Se valida el token enviado por el usuario.
             client.verifyToken({ authyId: authyId1, token: token2 })

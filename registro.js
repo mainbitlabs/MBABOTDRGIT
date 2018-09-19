@@ -4,9 +4,9 @@ var azurest = require('azure-storage');
 var config = require('./config');
 // Inicia el servicio Azure Storage Tables.
 var tableService = azurest.createTableService(config.storageA, config.accessK);
-const Client = require('authy-client').Client;
+var Client = require('authy-client').Client;
 // Inicia el servicio de Authy.
-const client = new Client({ key: config.authyCl });
+var client = new Client({ key: config.authyCl });
 // Module.exports: Exporta los díalogos para que sean utilizados por app.js
 module.exports = [
     function (session) {
@@ -66,7 +66,7 @@ module.exports = [
     function (session, results) {
         session.dialogData.token = results.response;
         tableService.retrieveEntity(config.table3, 'Usuario registrado', session.dialogData.email, function(error, result, response) {
-            let authyId1 = result.AuthyID._;
+            var authyId1 = result.AuthyID._;
             console.log('Id tabla ' + authyId1 + typeof(authyId1)) ;
             console.log('Id Proporcionado ' + session.dialogData.token+ typeof(session.dialogData.token) ) ;
             if (authyId1 == session.dialogData.token) {
