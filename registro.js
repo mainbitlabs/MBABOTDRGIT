@@ -48,8 +48,12 @@ module.exports = [
                 }
                 }); 
                 nodeoutlook.sendEmail({
+<<<<<<< HEAD
                 // Se envía un correo al usuario con el token.
                  auth: {
+=======
+                    auth: {
+>>>>>>> c0f3dd46d59d47ab581139d61ffe4030e998f087
                         user: `${config.email}`,
                         pass: `${config.pass}`,
                     }, from: `${config.email}`,
