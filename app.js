@@ -52,6 +52,7 @@ bot.dialog('/', [
     function (session, results, next) {
         // El bot envía las dos opciónes inicales
         builder.Prompts.choice(session, 'Hola ¿en qué te puedo ayudar?', [DialogLabels.Unlock, DialogLabels.Reset], { listStyle: builder.ListStyle.button });
+        session.send(`**Sugerencia:** Si por alguna razón necesitas volver a este menú introduce el texto **cancelar**`)
     },
     function (session, result) {
              
@@ -70,3 +71,12 @@ bot.dialog('existe', require('./existe'));
 bot.dialog('registro', require('./registro'));
 bot.dialog('reseteo', require('./reseteo'));
 bot.dialog('desbloqueo', require('./desbloqueo'));
+// Cuando el usuario escribe "cancelar" el bot vuelve al menú principal
+bot.dialog('cancel',
+    function (session) {
+        session.endDialog('No hay problema, volvamos a iniciar de nuevo.');
+        session.beginDialog('/')
+    }
+).triggerAction(
+    {matches: /(cancel|cancelar)/gi}
+);
