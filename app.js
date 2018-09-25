@@ -52,7 +52,10 @@ bot.dialog('/', [
     function (session, results, next) {
         // El bot envía las dos opciónes inicales
         builder.Prompts.choice(session, 'Hola ¿en qué te puedo ayudar?', [DialogLabels.Unlock, DialogLabels.Reset], { listStyle: builder.ListStyle.button });
-        session.send(`**Sugerencia:** Si por alguna razón necesitas volver a este menú introduce el texto **cancelar**`)
+        session.send(`**Sugerencia:** Si por alguna razón necesitas volver a este menú introduce el texto **cancelar.** \n **Importante: este Bot tiene un ciclo de vida de 5 minutos, te recomendamos concluir la actividad antes de este periodo.**`);
+        setTimeout(() => {
+            session.endDialog(`**Ha transcurrido el tiempo estimado para completar esta actividad.** \n **Este Bot se ha reiniciado, podemos comenzar de nuevo.**`);
+        }, 300000);
     },
     function (session, result) {
              

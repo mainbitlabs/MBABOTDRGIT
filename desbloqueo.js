@@ -2,7 +2,6 @@ var azurest = require('azure-storage');
 var restify = require('restify');
 var builder = require('botbuilder');
 var config = require('./config');
-var azure = require('botbuilder-azure'); 
 // Inicia el servicio Azure Storage Tables
 var tableService = azurest.createTableService(config.storageA, config.accessK);
 // Module.exports: Exporta los díalogos para que sean utilizados por app.js
