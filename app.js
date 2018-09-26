@@ -74,6 +74,8 @@ bot.dialog('existe', require('./existe'));
 bot.dialog('registro', require('./registro'));
 bot.dialog('reseteo', require('./reseteo'));
 bot.dialog('desbloqueo', require('./desbloqueo'));
+bot.dialog('pass', require('./pass')); // comprueba los factores de seguridad del nuevo pass.
+
 // Cuando el usuario escribe "cancelar" el bot vuelve al menú principal
 bot.dialog('cancel',
     function (session) {

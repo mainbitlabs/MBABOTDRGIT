@@ -55,35 +55,29 @@ function (session, results) {
             client.verifyToken({ authyId: authyId1, token: token2 })
                 // Si es exitoso genera un nuevo pass.
                 .then(function(response) {
-                    var x = function myFunc() {
-                        var y = "";
-                        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                        for( var i=0; i < 4; i++ )
-                        y += possible.charAt(Math.floor(Math.random() * possible.length));
-                        return y;
-                        };
-                        var randomid = 'Mainbit.' + x();
-                        console.log(randomid);
-            
-                    var sessame = {
-                        PartitionKey : {'_': 'Resetear contraseña', '$':'Edm.String'},
-                        RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
-                        RandomId: {'_': randomid, '$':'Edm.String'}
-                    };
-                    tableService.insertOrReplaceEntity (config.table1, sessame, function(error) {
-                    if(!error) {
-                        console.log('Entity tabla 1 inserted');   // Entity inserted
-                    }}); 
-                    console.log('Token is valid');
-                    // Envía el nuevo pass al usuario.
-                    session.send(`Tu cuenta ha cambiado de password, ahora es: **${randomid}**`);
-                    // Indica al usuario el tiempo que debe esperar para validar su acceso.
-                    session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);
+                    session.beginDialog('pass');
                 })
                 .catch(function(error) {
                     // Si la validación no tiene éxito envía un mensaje al usuario.
                     session.endDialog('El código proporcionado es incorrecto.');
             });
     });
+},
+function (session, results) {
+    session.dialogData.pass = results.response;
+    var sessame = {
+        PartitionKey : {'_': 'Resetear contraseña', '$':'Edm.String'},
+        RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
+        RandomId: {'_': session.dialogData.pass, '$':'Edm.String'}
+    };
+    tableService.insertOrReplaceEntity (config.table1, sessame, function(error) {
+    if(!error) {
+        console.log('Entity tabla 1 inserted');   // Entity inserted
+    }}); 
+    console.log('Token is valid');
+    // Envía el nuevo pass al usuario.
+    session.send(`Tu cuenta ha cambiado de password, ahora es: **${session.dialogData.pass}**`);
+    // Indica al usuario el tiempo que debe esperar para validar su acceso.
+    session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);
 }
 ];
