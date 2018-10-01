@@ -75,9 +75,29 @@ function (session, results) {
         console.log('Entity tabla 1 inserted');   // Entity inserted
     }}); 
     console.log('Token is valid');
-    // Envía el nuevo pass al usuario.
-    session.send(`Tu cuenta ha cambiado de password, ahora es: **${session.dialogData.pass}**`);
-    // Indica al usuario el tiempo que debe esperar para validar su acceso.
-    session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);
+    session.sendTyping();
+    // Envíamos un mensaje al usuario para que espere.
+    session.send('Estamos atendiendo tu solicitud. Por favor espera un momento...');
+    
+    // Hacemos un retraso de 5 segundos.
+    setTimeout(() => {
+        // Busca el estatus del usuario en la tabla 2.
+        tableService.retrieveEntity(config.table2, 'Resetear contraseña', session.dialogData.cuenta, function(error, result, response) {
+            // var unlock = result.Status._;
+            if(!error && result.Status._=='Reset') {
+                // Envía el nuevo pass al usuario.
+                session.send(`Tu cuenta ha cambiado de password, ahora es: **${session.dialogData.pass}**`);
+                // Indica al usuario el tiempo que debe esperar para validar su acceso.
+                session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);                                
+            }else if(!error && result.Status._=='Noexiste'){
+        
+                session.endDialog(`La cuenta solicitada **No existe**. Saludos.`);
+            }
+            else{
+                session.endDialog("**Error:** Por favor intentalo más tarde.");
+            }
+        });
+    }, 30000);
+    
 }
 ];
