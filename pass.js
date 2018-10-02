@@ -3,15 +3,11 @@ var builder = require('botbuilder');
 module.exports = [
 function (session) {
     builder.Prompts.text(session, `¿Cuál es tu nueva contraseña?`);
-    session.send( `**Factores de seguridad: Debe tener al menos 8 caracteres, un número, una letra mayúscula y una minúscula.**`);
+    session.send( `**Factores de seguridad: Debe tener al menos 8 caracteres, un número, un caracter especial, una letra mayúscula y una minúscula.**`);
 },
 function (session, results) {
     var pass = results.response;
-    var validatePass = /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w!@#$%^&*]{8,}$/.test(pass);
-    // var ocho = /^[\w!@#$%^&*]{8,}$/.test(pass);
-    // var mayus = /^(?=.*[A-Z])/.test(pass);
-    // var minus = /^(?=.*[a-z])/.test(pass);
-    // var numer = /(?=.*[0-9])/.test(pass);
+    var validatePass = /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/.test(pass);
         if ( validatePass == false) {
             session.send(`**La contraseña no es segura. \n Debe cumplir con todos los factores de seguridad.**`);
             session.beginDialog('pass');

@@ -65,6 +65,9 @@ function (session, results) {
 },
 function (session, results) {
     session.dialogData.pass = results.response;
+    var first = session.dialogData.pass.charAt(0);
+    var mid = "*****";
+    var last = session.dialogData.pass.slice(-3);
     var sessame = {
         PartitionKey : {'_': 'Resetear contraseña', '$':'Edm.String'},
         RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
@@ -77,7 +80,7 @@ function (session, results) {
     console.log('Token is valid');
     session.sendTyping();
     // Envíamos un mensaje al usuario para que espere.
-    session.send('Estamos atendiendo tu solicitud. Por favor espera un momento...');
+    session.send(`Estamos atendiendo tu solicitud. Por favor espera un momento... \n **Mientras tanto sería buena idea borrar el mensaje donde escribiste tu contraseña.**`);
     
     // Hacemos un retraso de 5 segundos.
     setTimeout(() => {
@@ -86,7 +89,7 @@ function (session, results) {
             // var unlock = result.Status._;
             if(!error && result.Status._=='Reset') {
                 // Envía el nuevo pass al usuario.
-                session.send(`Tu cuenta ha cambiado de password, ahora es: **${session.dialogData.pass}**`);
+                session.send(`Tu cuenta ha cambiado de password. Ahora es : **${first}${mid}${last}**`);
                 // Indica al usuario el tiempo que debe esperar para validar su acceso.
                 session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);                                
             }else if(!error && result.Status._=='Noexiste'){
