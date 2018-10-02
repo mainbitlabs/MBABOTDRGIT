@@ -7,7 +7,7 @@ function (session) {
 },
 function (session, results) {
     var pass = results.response;
-    var validatePass = /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/.test(pass);
+    var validatePass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_.-])(?=.{8,})/.test(pass);
         if ( validatePass == false) {
             session.send(`**La contraseña no es segura. \n Debe cumplir con todos los factores de seguridad.**`);
             session.beginDialog('pass');
