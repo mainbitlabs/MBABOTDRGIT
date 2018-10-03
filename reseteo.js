@@ -55,6 +55,8 @@ function (session, results) {
             client.verifyToken({ authyId: authyId1, token: token2 })
                 // Si es exitoso genera un nuevo pass.
                 .then(function(response) {
+                    console.log('Token is valid');
+                    session.send(`*El código es válido.*`);
                     session.beginDialog('pass');
                 })
                 .catch(function(error) {
@@ -68,6 +70,7 @@ function (session, results) {
     var first = session.dialogData.pass.charAt(0);
     var mid = "*****";
     var last = session.dialogData.pass.slice(-3);
+    // Inserta la información recibida a la tabla 1   
     var sessame = {
         PartitionKey : {'_': 'Resetear contraseña', '$':'Edm.String'},
         RowKey: {'_': session.dialogData.cuenta, '$':'Edm.String'},
@@ -77,19 +80,19 @@ function (session, results) {
     if(!error) {
         console.log('Entity tabla 1 inserted');   // Entity inserted
     }}); 
-    console.log('Token is valid');
     session.sendTyping();
     // Envíamos un mensaje al usuario para que espere.
-    session.send(`Estamos atendiendo tu solicitud. Por favor espera un momento... \n **Mientras tanto sería buena idea borrar el mensaje donde escribiste tu contraseña.**`);
+    session.send('Estamos atendiendo tu solicitud. Por favor espera un momento...');
+    session.send(`**Mientras tanto sería buena idea borrar el mensaje donde escribiste tu contraseña.**`);
     
-    // Hacemos un retraso de 5 segundos.
+    // Hacemos un retraso de 30 segundos.
     setTimeout(() => {
         // Busca el estatus del usuario en la tabla 2.
         tableService.retrieveEntity(config.table2, 'Resetear contraseña', session.dialogData.cuenta, function(error, result, response) {
             // var unlock = result.Status._;
             if(!error && result.Status._=='Reset') {
                 // Envía el nuevo pass al usuario.
-                session.send(`Tu cuenta ha cambiado de password. Ahora es : **${first}${mid}${last}**`);
+                session.send(`Tu cuenta ha cambiado de contraseña, ahora es : **${first}**${mid}**${last}**`);
                 // Indica al usuario el tiempo que debe esperar para validar su acceso.
                 session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);                                
             }else if(!error && result.Status._=='Noexiste'){
@@ -97,7 +100,7 @@ function (session, results) {
                 session.endDialog(`La cuenta solicitada **No existe**. Saludos.`);
             }
             else{
-                session.endDialog("**Error:** Por favor intentalo más tarde.");
+                session.endDialog("**Ocurrió un error:** Por favor intentalo más tarde.");
             }
         });
     }, 30000);
