@@ -53,7 +53,7 @@ module.exports = [
                         PartitionKey: {'_': 'Desbloqueo cuenta'},
                         RowKey: {'_': session.dialogData.cuenta}
                     };
-                    tableSvc.deleteEntity(config.table2, delet, function(error, response){
+                    tableService.deleteEntity(config.table2, delet, function(error, response){
                     if(!error) {
                         session.endDialog(`Me solicitaste **Desbloquear tu cuenta**, la cuenta ha sido desbloqueada. Saludos.`);
                         // Entity deleted

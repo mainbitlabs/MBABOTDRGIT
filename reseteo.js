@@ -99,7 +99,7 @@ function (session, results) {
                     RowKey: {'_': session.dialogData.cuenta}
                 };
                 
-                tableSvc.deleteEntity(config.table2, delet, function(error, response){
+                tableService.deleteEntity(config.table2, delet, function(error, response){
                     if(!error) {
                     // Entity deleted
                     // Indica al usuario el tiempo que debe esperar para validar su acceso.
