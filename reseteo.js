@@ -93,8 +93,19 @@ function (session, results) {
             if(!error && result.Status._=='Reset') {
                 // Envía el nuevo pass al usuario.
                 session.send(`Tu cuenta ha cambiado de contraseña, ahora es : **${first}**${mid}**${last}**`);
-                // Indica al usuario el tiempo que debe esperar para validar su acceso.
-                session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);                                
+                // Se borra el elemento de la tabla
+                var delet = {
+                    PartitionKey: {'_':'Resetear contraseña'},
+                    RowKey: {'_': session.dialogData.cuenta}
+                };
+                
+                tableSvc.deleteEntity(config.table2, delet, function(error, response){
+                    if(!error) {
+                    // Entity deleted
+                    // Indica al usuario el tiempo que debe esperar para validar su acceso.
+                    session.endDialog(`Recuerda que si estás en la red interna de Mainbit debes esperar 1 minuto antes de validar tu acceso, en caso de estar fuera de la red interna este proceso puede tardar hasta 10 minutos.`);
+                }
+                });
             }else if(!error && result.Status._=='Noexiste'){
         
                 session.endDialog(`La cuenta solicitada **No existe**. Saludos.`);
