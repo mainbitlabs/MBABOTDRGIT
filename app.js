@@ -46,15 +46,16 @@ var DialogLabels = {
     Unlock: 'Desbloquear cuenta',
     Reset: 'Resetear contraseña'
 };
-
+var time;
 // El díalogo principal inicia aquí
 bot.dialog('/', [
+    
     function (session, results, next) {
         // El bot envía las dos opciónes inicales
         builder.Prompts.choice(session, 'Hola ¿en qué te puedo ayudar?', [DialogLabels.Unlock, DialogLabels.Reset], { listStyle: builder.ListStyle.button });
-        session.send(`**Sugerencia:** Si por alguna razón necesitas volver a este menú introduce el texto **cancelar.** \n **Importante: este Bot tiene un ciclo de vida de 5 minutos, te recomendamos concluir la actividad antes de este periodo.**`);
-        setTimeout(() => {
-            session.endDialog(`**Ha transcurrido el tiempo estimado para completar esta actividad.** \n **Este Bot se ha reiniciado, podemos comenzar de nuevo.**`);
+        session.send(`**Sugerencia:** Si por alguna razón necesitas volver a este menú introduce el texto **cancelar.** \n **Importante:** este bot tiene un ciclo de vida de 10 minutos, te recomendamos concluir la actividad antes de este periodo.`);
+        time = setTimeout(() => {
+            session.endDialog(`**Lo sentimos ha transcurrido el tiempo estimado para completar esta actividad. Intentalo nuevamente.**`);
         }, 300000);
     },
     function (session, result) {
@@ -79,8 +80,9 @@ bot.dialog('pass', require('./pass')); // comprueba los factores de seguridad de
 // Cuando el usuario escribe "cancelar" el bot vuelve al menú principal
 bot.dialog('cancel',
     function (session) {
-        session.endDialog('No hay problema, volvamos a iniciar de nuevo.');
-        session.beginDialog('/')
+        clearTimeout(time);
+        session.endConversation('No hay problema, volvamos a iniciar de nuevo.');
+        session.replaceDialog('/');
     }
 ).triggerAction(
     {matches: /(cancel|cancelar)/gi}
